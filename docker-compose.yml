@@ -1,0 +1,59 @@
+services:
+  eventapi_postgres:
+    image: postgres:15-alpine
+    container_name: eventapi_postgres
+    environment:
+      POSTGRES_DB: eventapi_postgres_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: JBcDi9Q57k
+    ports:
+      - '5432:5432'
+    volumes:
+      - eventapi_postgres_persistent_data:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d
+      - ./postgresql.conf:/etc/postgresql/postgresql.conf
+    command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
+    networks:
+      - eventapi_app_network
+    restart: always
+
+  eventapi_redis:
+    image: redis:7.4
+    container_name: eventapi_redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - eventapi_redis_data:/data
+    environment:
+      - REDIS_PASSWORD=JBcDi9Q57k
+    command: ['redis-server', '--requirepass', 'JBcDi9Q57k']
+    networks:
+      - eventapi_app_network
+    restart: always
+
+  eventapi_nestjs_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: eventapi_nestjs_app
+    ports:
+      - '5001:5001'
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./src:/app_core/src
+    depends_on:
+      - eventapi_postgres
+    networks:
+      - eventapi_app_network
+    restart: always
+    
+volumes:
+  eventapi_postgres_persistent_data:
+    driver: local
+  eventapi_redis_data:
+    driver: local
+
+networks:
+  eventapi_app_network:
+    driver: bridge

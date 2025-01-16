@@ -1,0 +1,15 @@
+export const DEVELOPMENT = 'development';
+export const TEST = 'test';
+export const PRODUCTION = 'production';
+
+export const REDIS_CONNECTION = 'REDIS_CONNECTION';
+
+export const DATABASE_CONNECTION = 'DATABASE_CONNECTION';
+
+export const ATTENDEE_REPOSITORY = 'ATTENDEE_REPOSITORY';
+export const REGISTRATION_REPOSITORY = 'REGISTRATION_REPOSITORY';
+export const EVENT_REPOSITORY = 'EVENT_REPOSITORY';
+
+export const QUEUE_NAME = 'QUEUE_NAME';
+
+export const TESTING_REPOSITORY = 'TESTING_REPOSITORY';
