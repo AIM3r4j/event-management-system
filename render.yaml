@@ -1,0 +1,45 @@
+services:
+  - type: redis
+    name: eventapi_redis
+    plan: free
+    ipAllowList:
+      - source: 0.0.0.0/0  # Allow all IPs to connect (adjust as needed)
+
+  - type: web
+    name: eventapi_nestjs_app
+    runtime: docker
+    dockerfilePath: ./Dockerfile 
+    plan: free
+    buildCommand: npm install
+    envVars:
+      - key: NODE_ENV
+        value: development
+      - key: DB_HOST
+        fromDatabase:
+          name: eventapi_postgres
+          property: host
+      - key: DB_NAME_DEVELOPMENT
+        fromDatabase:
+          name: eventapi_postgres
+          property: database
+      - key: DB_USER
+        value: admin
+      - key: DB_PASS
+        fromDatabase:
+          name: eventapi_postgres
+          property: password
+      - key: REDIS_HOST
+        fromService: 
+          type: redis
+          name: eventapi_redis
+          property: host
+      - key: REDIS_PASS
+        value: ''
+
+databases:
+  - name: eventapi_postgres
+    databaseName: eventapi_postgres_db
+    user: admin
+    plan: free
+    ipAllowList:
+      - source: 0.0.0.0/0  # Allow all IPs to connect (adjust as needed)
